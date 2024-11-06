@@ -1,0 +1,25 @@
+/* mbed Microcontroller Library
+ * Copyright (c) 2019 ARM Limited
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include "mbed.h"
+
+#define frequency 500000
+
+Ticker ticker;
+
+DigitalOut led(PC_0);
+
+void blink();
+
+int main()
+{
+    ticker.attach_us(&blink, frequency);
+
+    while(true) {}
+}
+
+void blink() {
+    led = !led;
+}

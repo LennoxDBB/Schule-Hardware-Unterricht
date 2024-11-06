@@ -1,0 +1,70 @@
+#include "mbed.h"
+
+#define STOPPED 0b00
+#define COUNTERCLOCKWISE 0b01
+#define CLOCKWISE 0b10
+
+char state = STOPPED;
+
+short direction = 0;
+short stop = 0;
+
+PortOut pc(PortC, 0b11);
+
+InterruptIn buttonStop(PA_1);
+InterruptIn buttonRight(PA_10);
+InterruptIn buttonLeft(PA_6);
+
+void init();
+
+void stopISR();
+void rightISR();
+void leftISR();
+
+int main() {
+    init();
+
+    while(true) {
+        switch(state) {
+        
+        case STOPPED:
+            if(direction == 0 && stop == 0) state = COUNTERCLOCKWISE;
+            if(direction == 1 && stop == 0) state = CLOCKWISE;
+            break;
+        case COUNTERCLOCKWISE:
+            if(direction == 1 && stop == 0) state = CLOCKWISE;
+            if(stop == 1) state = STOPPED;
+            break;
+        case CLOCKWISE:
+            if(direction == 0 && stop == 0) state = COUNTERCLOCKWISE;
+            if(stop == 1) state = STOPPED;
+            break;
+        }
+
+        pc = state;
+    }
+}
+
+void init() {
+    buttonStop.mode(PullDown);
+    buttonRight.mode(PullDown);
+    buttonLeft.mode(PullDown);
+
+    buttonStop.rise(&stopISR);
+    buttonRight.rise(&rightISR);
+    buttonLeft.rise(&leftISR);
+}
+
+void stopISR() {
+    stop = 1;
+}
+
+void rightISR() {
+    stop = 0;
+    direction = 1;
+}
+
+void leftISR() {
+    stop = 0;
+    direction = 0;
+}

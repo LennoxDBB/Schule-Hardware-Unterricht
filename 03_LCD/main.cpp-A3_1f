@@ -1,0 +1,16 @@
+/* mbed Microcontroller Library
+ * Copyright (c) 2019 ARM Limited
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include "mbed.h"
+#include "LCD.h"
+
+lcd mylcd;
+
+int main() {
+    mylcd.cursorpos(0);
+    mylcd.printf("Hallo Welt!");
+    mylcd.cursorpos(64);
+    mylcd.printf("Hier ist Sindelfingen.");
+}

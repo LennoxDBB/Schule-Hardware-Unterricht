@@ -1,0 +1,64 @@
+/* mbed Microcontroller Library
+ * Copyright (c) 2019 ARM Limited
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include "mbed.h"
+
+#define frequency 75000
+
+int seg7[10] = {0b00111111,
+                0b00000110,
+                0b01011011,
+                0b01001111,
+                0b01100110,
+                0b01101101,
+                0b01111101,
+                0b00000111,
+                0b01111111,
+                0b01101111};
+
+int first = 0;
+int second = 0;
+
+Ticker ticker;
+PortOut segment(PortC, 0b11111111);
+DigitalOut firstPos(PC_12);
+DigitalOut secondPos(PC_11);
+
+void countUp();
+void show();
+
+int main()
+{
+    firstPos = 1;
+    secondPos = 0;
+    ticker.attach_us(&show, frequency);
+
+    while(true) {}
+}
+
+void countUp() {
+    second++;
+
+    if(second > 9) {
+        first++;
+        second = 0;
+    }
+
+    if(first > 9) {
+        first = 0;
+    }
+}
+
+void show() {
+    firstPos = !firstPos;
+    secondPos = !secondPos;
+
+    if(firstPos) {
+        segment = seg7[first];
+        countUp();
+    } else if(secondPos) {
+        segment = seg7[second];
+    }
+}

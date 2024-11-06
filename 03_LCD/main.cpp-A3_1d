@@ -1,0 +1,23 @@
+/* mbed Microcontroller Library
+ * Copyright (c) 2019 ARM Limited
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include "mbed.h"
+#include "LCD.h"
+
+#define WAITING_TIME 500ms
+
+lcd mylcd;
+
+int main() {
+    int count = 0;
+
+    mylcd.cursorpos(0);
+
+    for(int i = 100; i >= 0; i--) {
+        mylcd.clear();
+        mylcd.printf("%d", i);
+        ThisThread::sleep_for(WAITING_TIME);
+    }
+}

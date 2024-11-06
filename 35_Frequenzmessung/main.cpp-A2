@@ -1,0 +1,48 @@
+/* mbed Microcontroller Library
+ * Copyright (c) 2019 ARM Limited
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include "mbed.h"
+#include "LCD.h"
+
+void initTimer();
+void measure();
+
+InterruptIn signal(PA_1);
+lcd mylcd;
+
+int periodDuration = 0;
+float frequency;
+
+int main()
+{
+    initTimer();
+
+    signal.mode(PullDown);
+    signal.rise(&measure);
+    signal.enable_irq();
+
+    mylcd.cursorpos(0);
+
+    while(true) {
+        frequency = ((1.0 / periodDuration) * 1000000);
+
+        mylcd.clear();
+        mylcd.printf("%f", frequency);
+        mylcd.printf("Hz");
+    }
+}
+
+void initTimer() {
+    RCC -> APB1ENR |= 0b10000;
+    TIM6 -> PSC = 31;
+    TIM6 -> ARR = 0xFFFF;
+    TIM6 -> CNT = 0xFFFF;
+    TIM6 -> CR1 = 1;
+}
+
+void measure() {
+    periodDuration = TIM6 -> CNT;
+    TIM6 -> CNT = 0;
+}

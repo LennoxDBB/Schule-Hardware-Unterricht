@@ -1,0 +1,30 @@
+#include "mbed.h"
+
+void initTimer();
+
+DigitalOut led(PC_0);
+
+
+
+int main()
+{
+    initTimer();
+
+    while(true) {
+        if(TIM6 -> SR != 0) {
+            TIM6 -> SR = 0;
+            led = !led;
+        }
+    }
+}
+
+
+
+void initTimer() {
+    RCC -> APB1ENR |= 0b10000;
+    TIM6 -> PSC = 31999;
+    TIM6 -> ARR = 999;
+    TIM6 -> CNT = 0;
+    TIM6 -> SR = 0;
+    TIM6 -> CR1 = 1;
+}

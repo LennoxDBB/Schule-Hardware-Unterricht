@@ -1,0 +1,71 @@
+#include "mbed.h"
+
+#define WAITING_TIME 10ms
+#define PORT_MASK 0xF
+
+char bits[] = {
+    0b0011,
+    0b0110,
+    0b1100,
+    0b1001
+};
+
+bool isRunning = true;
+
+int index = 0;
+int direction = -1;
+
+PortOut pc(PortC, PORT_MASK);
+
+InterruptIn stopButton(PA_10);
+InterruptIn startCounterClockwiseButton(PA_6);
+InterruptIn startClockwiseButton(PA_1);
+
+void stopMotor(void);
+void startCounterClockwiseDirection(void);
+void startClockwiseDirection(void);
+
+int main()
+{
+    stopButton.mode(PullDown);
+    stopButton.rise(&stopMotor);
+    stopButton.enable_irq();
+
+    startCounterClockwiseButton.mode(PullDown);
+    startCounterClockwiseButton.rise(&startCounterClockwiseDirection);
+    startCounterClockwiseButton.disable_irq();
+
+    startClockwiseButton.mode(PullDown);
+    startClockwiseButton.rise(&startClockwiseDirection);
+    startClockwiseButton.disable_irq();
+
+    while(true) {
+        if(isRunning) {
+            pc = bits[index];
+            index = index + direction;
+            index = (index + 4) % 4;
+            ThisThread::sleep_for(WAITING_TIME);
+        }
+    }
+}
+
+void stopMotor(void) {
+    pc = 0b0000;
+    isRunning = false;
+    startClockwiseButton.enable_irq();
+    startCounterClockwiseButton.enable_irq();
+}
+
+void startCounterClockwiseDirection(void) {
+    isRunning = true;
+    direction = -1;
+    startClockwiseButton.disable_irq();
+    startCounterClockwiseButton.disable_irq();
+}
+
+void startClockwiseDirection(void) {
+    isRunning = true;
+    direction = 1;
+    startClockwiseButton.disable_irq();
+    startCounterClockwiseButton.disable_irq();
+}

@@ -1,0 +1,42 @@
+#include "mbed.h"
+
+#define WAITING_TIME 10ms
+#define PORT_MASK 0xF
+
+char bits[] = {
+    0b0011,
+    0b0110,
+    0b1100,
+    0b1001
+};
+
+bool isRunning = true;
+
+int index = 3;
+
+PortOut pc(PortC, PORT_MASK);
+
+InterruptIn stopButton(PA_10);
+
+void stopMotor(void);
+
+int main()
+{
+    stopButton.mode(PullDown);
+    stopButton.rise(&stopMotor);
+    stopButton.enable_irq();
+
+    while(true) {
+        if(isRunning) {
+            pc = bits[index];
+            index = index - 1;
+            index = (index + 4) % 4;
+            ThisThread::sleep_for(WAITING_TIME);
+        }
+    }
+}
+
+void stopMotor(void) {
+    pc = 0b0000;
+    isRunning = false;
+}

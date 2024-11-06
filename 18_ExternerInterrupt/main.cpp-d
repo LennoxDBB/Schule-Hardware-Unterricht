@@ -1,0 +1,36 @@
+#include "mbed.h"
+
+#define PORT_MASK 0xFF
+
+InterruptIn button1(PA_1);
+InterruptIn button6(PA_6);
+
+PortOut pc(PortC, PORT_MASK);
+
+void button1ISR(void);
+void button6ISR(void);
+
+int main()
+{
+    button1.mode(PullDown);
+    button1.rise(&button1ISR);
+    
+    button6.mode(PullDown);
+    button6.rise(&button6ISR);
+
+    __enable_irq();
+
+    while(true) {}
+}
+
+void button1ISR(void) {
+    if(pc >= pow(2, 8) - 1) return;
+
+    pc = pc + 1;
+}
+
+void button6ISR(void) {
+    if(pc <= 0) return;
+
+    pc = pc - 1;
+}

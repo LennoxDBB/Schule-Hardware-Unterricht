@@ -1,0 +1,24 @@
+/* mbed Microcontroller Library
+ * Copyright (c) 2019 ARM Limited
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include "mbed.h"
+
+#define MASK 0xFF
+
+int main()
+{
+    DigitalIn pa1(PA_1);
+    pa1.mode(PullDown);
+
+    PortOut pc(PortC, MASK);
+
+    while(true) {
+        if(pa1) {
+           pc=0b00100011;
+           while(pa1){}
+        }
+        pc=0x0;
+    }
+}

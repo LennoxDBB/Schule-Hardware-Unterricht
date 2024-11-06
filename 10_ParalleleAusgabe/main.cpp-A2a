@@ -1,0 +1,24 @@
+/* mbed Microcontroller Library
+ * Copyright (c) 2019 ARM Limited
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include "mbed.h"
+
+#define MASK 0b11111111
+#define WAITING_TIME 500ms
+
+int main()
+{
+    PortOut pc(PortC, MASK);
+    
+    int counter = 0;
+
+    while(true) {
+        pc = pow(2, counter);
+        counter++;
+        if(counter == 8) counter = 0;
+        ThisThread::sleep_for(WAITING_TIME);
+    }
+
+}

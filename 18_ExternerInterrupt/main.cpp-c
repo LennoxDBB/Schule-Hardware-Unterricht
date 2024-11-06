@@ -1,0 +1,30 @@
+#include "mbed.h"
+
+InterruptIn button1(PA_1);
+InterruptIn button6(PA_6);
+
+DigitalOut led(PC_0);
+
+void button1ISR(void);
+void button6ISR(void);
+
+int main()
+{
+    button1.mode(PullDown);
+    button1.rise(&button1ISR);
+    
+    button6.mode(PullDown);
+    button6.rise(&button6ISR);
+
+    __enable_irq();
+
+    while(true) {}
+}
+
+void button1ISR(void) {
+    led = 1;
+}
+
+void button6ISR(void) {
+    led = 0;
+}

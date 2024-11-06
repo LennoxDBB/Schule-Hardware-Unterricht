@@ -1,0 +1,45 @@
+/* mbed Microcontroller Library
+ * Copyright (c) 2019 ARM Limited
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include "mbed.h"
+
+
+// Blinking rate in milliseconds
+#define BLINKING_RATE     300ms
+
+
+int main()
+{
+    // Initialise the digital pin LED1 as an output
+    DigitalOut redLed(PC_0);    //color = 1
+    DigitalOut greenLed(PC_1);  //color = 2
+    DigitalOut yellowLed(PC_2); //color = 3
+    int color = 0;
+
+    while (true) {
+        switch(color) {
+        case 1:
+            redLed = true;
+            color = 2;
+            break;
+        case 2:
+            greenLed = true;
+            color = 3;
+            break;
+        case 3:
+            yellowLed = true;
+            color = 0;
+            break;
+        default:
+            color = 1;
+            break;
+        }
+
+        ThisThread::sleep_for(BLINKING_RATE);
+        redLed = false;
+        greenLed = false;
+        yellowLed = false;
+    }
+}

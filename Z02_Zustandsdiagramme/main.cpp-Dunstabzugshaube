@@ -1,0 +1,92 @@
+#include "mbed.h"
+
+#define Aus 0b0000
+#define Stufe1 0b0001
+#define Stufe2 0b0010
+#define Stufe3 0b0100
+#define Stufe4 0b1000
+
+PortOut pc(PortC, 0b1111);
+
+InterruptIn ta(PA_1);
+InterruptIn tv(PA_10);
+InterruptIn tr(PA_6);
+
+void init();
+
+void einaus();
+void hochschalten();
+void runterschalten();
+
+char state = Aus;
+
+int main() {
+    init();
+
+    while(true) {
+        pc = state;
+    }
+}
+
+void init() {
+    ta.mode(PullDown);
+    tv.mode(PullDown);
+    tr.mode(PullDown);
+
+    ta.rise(&einaus);
+    tv.rise(&hochschalten);
+    tr.rise(&runterschalten);
+}
+
+void einaus() {
+    switch(state) {
+        
+    case Aus:
+        state = Stufe1;
+        break;
+    case Stufe1:
+    case Stufe2:
+    case Stufe3:
+    case Stufe4:
+        state = Aus;
+        break;
+    }
+}
+
+void hochschalten() {
+    switch(state) {
+
+    case Aus:
+        break;
+    case Stufe1:
+        state = Stufe2;
+        break;
+    case Stufe2:
+        state = Stufe3;
+        break;
+    case Stufe3:
+        state = Stufe4;
+        break;
+    case Stufe4:
+        break;
+    }
+}
+
+void runterschalten() {
+    switch(state) {
+
+    case Aus:
+        break;
+    case Stufe1:
+        break;
+    case Stufe2:
+        state = Stufe1;
+        break;
+    case Stufe3:
+        state = Stufe2;
+        break;
+    case Stufe4:
+        state = Stufe3;
+        break;
+    }
+}

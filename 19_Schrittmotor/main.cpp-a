@@ -1,0 +1,25 @@
+#include "mbed.h"
+
+#define WAITING_TIME 10ms
+#define PORT_MASK 0xF
+
+char bits[] = {
+    0b0011,
+    0b0110,
+    0b1100,
+    0b1001
+};
+
+int index = 3;
+
+PortOut pc(PortC, PORT_MASK);
+
+int main()
+{
+    while(true) {
+        pc = bits[index];
+        index = index - 1;
+        index = (index + 4) % 4;
+        ThisThread::sleep_for(WAITING_TIME);
+    }
+}
